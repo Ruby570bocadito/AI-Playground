@@ -292,13 +292,13 @@ async function createAgent(role, model, customPrompt, customTools = null) {
 
         addActivityLog('system', `Agent created successfully`, result.agent_id || null, {
             role, model,
-            tools: custom Tools || 'default'
+            tools: customTools || 'default'
         });
-} catch (error) {
-    console.error('Error creating agent:', error);
-    addActivityLog('error', `Failed to create agent: ${error.message}`);
-    alert('Failed to create agent');
-}
+    } catch (error) {
+        console.error('Error creating agent:', error);
+        addActivityLog('error', `Failed to create agent: ${error.message}`);
+        alert('Failed to create agent');
+    }
 }
 
 // ============================================================================
