@@ -16,8 +16,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
-from models import ModelManager
-from agents import AgentManager
+from .models import ModelManager
+from .agents import AgentManager
 
 # Configurar logging
 logging.basicConfig(

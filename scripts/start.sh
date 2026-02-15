@@ -64,6 +64,5 @@ echo
 echo "============================================================"
 echo
 
-# Start the server (from project root with PYTHONPATH)
-export PYTHONPATH="${PROJECT_DIR}/backend:${PYTHONPATH}"
-python3 backend/main.py
+# Start the server as Python module
+python3 -m backend.main
