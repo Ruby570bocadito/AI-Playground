@@ -19,94 +19,158 @@
             </div>
         </header>
 
+        <!-- Tab Navigation -->
+        <nav class="tab-nav">
+            <button class="tab-button active" data-tab="dashboard">
+                <span class="tab-icon">📊</span>
+                <span class="tab-label">Dashboard</span>
+            </button>
+            <button class="tab-button" data-tab="chat">
+                <span class="tab-icon">💬</span>
+                <span class="tab-label">Chat</span>
+            </button>
+            <button class="tab-button" data-tab="collaboration">
+                <span class="tab-icon">🤝</span>
+                <span class="tab-label">Collaboration</span>
+            </button>
+            <button class="tab-button" data-tab="config">
+                <span class="tab-icon">🔧</span>
+                <span class="tab-label">Configuration</span>
+            </button>
+            <button class="tab-button" data-tab="console">
+                <span class="tab-icon">📜</span>
+                <span class="tab-label">Console</span>
+            </button>
+            <button class="tab-button" data-tab="results">
+                <span class="tab-icon">📋</span>
+                <span class="tab-label">Results</span>
+            </button>
+        </nav>
+
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Sidebar - Agents -->
-            <aside class="sidebar">
-                <div class="sidebar-header">
-                    <h2>Active Agents</h2>
-                    <button class="btn btn-primary" id="btn-create-agent">+ New Agent</button>
-                </div>
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" data-tab="dashboard">
+                <!-- Sidebar - Agents -->
+                <aside class="sidebar">
+                    <div class="sidebar-header">
+                        <h2>Active Agents</h2>
+                        <button class="btn btn-primary" id="btn-create-agent">+ New Agent</button>
+                    </div>
 
-                <div class="agents-list" id="agents-list">
-                    <!-- Agents will be populated here -->
-                </div>
+                    <div class="agents-list" id="agents-list">
+                        <!-- Agents will be populated here -->
+                    </div>
 
-                <div class="sidebar-stats">
-                    <h3>System Resources</h3>
-                    <div class="resource-bar">
-                        <label>RAM</label>
-                        <div class="bar">
-                            <div class="bar-fill" id="ram-bar"></div>
+                    <div class="sidebar-stats">
+                        <h3>System Resources</h3>
+                        <div class="resource-bar">
+                            <label>RAM</label>
+                            <div class="bar">
+                                <div class="bar-fill" id="ram-bar"></div>
+                            </div>
+                            <span id="ram-text">0 / 0 GB</span>
                         </div>
-                        <span id="ram-text">0 / 0 GB</span>
-                    </div>
-                    <div class="resource-bar">
-                        <label>VRAM</label>
-                        <div class="bar">
-                            <div class="bar-fill" id="vram-bar"></div>
+                        <div class="resource-bar">
+                            <label>VRAM</label>
+                            <div class="bar">
+                                <div class="bar-fill" id="vram-bar"></div>
+                            </div>
+                            <span id="vram-text">0 / 0 GB</span>
                         </div>
-                        <span id="vram-text">0 / 0 GB</span>
-                    </div>
-                    <div class="resource-bar">
-                        <label>Disk</label>
-                        <div class="bar">
-                            <div class="bar-fill" id="disk-bar"></div>
+                        <div class="resource-bar">
+                            <label>Disk</label>
+                            <div class="bar">
+                                <div class="bar-fill" id="disk-bar"></div>
+                            </div>
+                            <span id="disk-text">0 / 0 GB</span>
                         </div>
-                        <span id="disk-text">0 / 0 GB</span>
                     </div>
-                </div>
-            </aside>
+                </aside>
 
-            <!-- Main Panel -->
-            <section class="main-panel">
-                <!-- Debug/Activity Log Panel -->
-                <div class="debug-panel">
-                    <div class="section-header" onclick="toggleDebugPanel()">
-                        <h2>🔍 Activity Log & Debug</h2>
-                        <button class="btn btn-small" id="btn-clear-logs"
-                            onclick="event.stopPropagation(); clearActivityLog();">Clear</button>
-                    </div>
-                    <div id="debug-content" class="debug-content">
-                        <div class="debug-filters">
-                            <label><input type="checkbox" id="filter-command" checked> Commands</label>
-                            <label><input type="checkbox" id="filter-chat" checked> Chat</label>
-                            <label><input type="checkbox" id="filter-system" checked> System</label>
-                            <label><input type="checkbox" id="filter-error" checked> Errors</label>
+                <!-- Main Panel - Models -->
+                <section class="main-panel">
+                    <div class="models-section">
+                        <h2>Available Models</h2>
+                        <div class="models-grid" id="models-grid">
+                            <!-- Models will be populated here -->
                         </div>
-                        <div id="activity-log" class="activity-log">
-                            <div class="log-entry system" data-type="system">
-                                <span class="log-time">00:00:00</span>
-                                <span class="log-type">[SYSTEM]</span>
-                                <span class="log-message">Playground initialized</span>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Chat Tab -->
+            <div class="tab-content" data-tab="chat">
+                <section class="main-panel" style="width: 100%;">
+                    <div class="chat-section" id="chat-section" style="display: flex;">
+                        <div class="chat-header">
+                            <h3 id="chat-agent-name">Select an agent from Dashboard</h3>
+                            <button class="btn btn-secondary" id="btn-close-chat" onclick="switchTab('dashboard')">Back
+                                to Dashboard</button>
+                        </div>
+                        <div class="chat-messages" id="chat-messages">
+                            <!-- Messages will appear here -->
+                        </div>
+                        <div class="chat-input">
+                            <textarea id="chat-textarea" placeholder="Enter your message..." rows="3"></textarea>
+                            <button class="btn btn-primary" id="btn-send">Send</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Collaboration Tab -->
+            <div class="tab-content" data-tab="collaboration">
+                <section class="main-panel" style="width: 100%; padding: 2rem; text-align: center;">
+                    <h2>🤝 Agent Collaboration</h2>
+                    <p style="color: var(--gray); margin-top: 1rem;">Coming soon! Multi-agent cooperative tasks.</p>
+                </section>
+            </div>
+
+            <!-- Configuration Tab -->
+            <div class="tab-content" data-tab="config">
+                <section class="main-panel" style="width: 100%; padding: 2rem; text-align: center;">
+                    <h2>🔧 Configuration</h2>
+                    <p style="color: var(--gray); margin-top: 1rem;">Coming soon! Agent management and tool categories.
+                    </p>
+                </section>
+            </div>
+
+            <!-- Console Tab -->
+            <div class="tab-content" data-tab="console">
+                <section class="main-panel" style="width: 100%;">
+                    <div class="debug-panel">
+                        <div class="section-header" onclick="toggleDebugPanel()">
+                            <h2>🔍 Activity Log & Debug</h2>
+                            <button class="btn btn-small" id="btn-clear-logs"
+                                onclick="event.stopPropagation(); clearActivityLog();">Clear</button>
+                        </div>
+                        <div id="debug-content" class="debug-content">
+                            <div class="debug-filters">
+                                <label><input type="checkbox" id="filter-command" checked> Commands</label>
+                                <label><input type="checkbox" id="filter-chat" checked> Chat</label>
+                                <label><input type="checkbox" id="filter-system" checked> System</label>
+                                <label><input type="checkbox" id="filter-error" checked> Errors</label>
+                            </div>
+                            <div id="activity-log" class="activity-log">
+                                <div class="log-entry system" data-type="system">
+                                    <span class="log-time">00:00:00</span>
+                                    <span class="log-type">[SYSTEM]</span>
+                                    <span class="log-message">Playground initialized</span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </section>
+            </div>
 
-                <!-- Models Section -->
-                <div class="models-section">
-                    <h2>Available Models</h2>
-                    <div class="models-grid" id="models-grid">
-                        <!-- Models will be populated here -->
-                    </div>
-                </div>
-
-                <!-- Chat Interface -->
-                <div class="chat-section" id="chat-section" style="display: none;">
-                    <div class="chat-header">
-                        <h3 id="chat-agent-name">Select an agent</h3>
-                        <button class="btn btn-secondary" id="btn-close-chat">Close</button>
-                    </div>
-                    <div class="chat-messages" id="chat-messages">
-                        <!-- Messages will appear here -->
-                    </div>
-                    <div class="chat-input">
-                        <textarea id="chat-textarea" placeholder="Enter your message..." rows="3"></textarea>
-                        <button class="btn btn-primary" id="btn-send">Send</button>
-                    </div>
-                </div>
-            </section>
+            <!-- Results Tab -->
+            <div class="tab-content" data-tab="results">
+                <section class="main-panel" style="width: 100%; padding: 2rem; text-align: center;">
+                    <h2>📋 Results History</h2>
+                    <p style="color: var(--gray); margin-top: 1rem;">Coming soon! Scan results and reports.</p>
+                </section>
+            </div>
         </main>
     </div>
 

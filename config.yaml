@@ -163,6 +163,62 @@ roles:
       - "mistral"
       - "phi3"
 
+# Tool Categories for UI
+tool_categories:
+  Reconnaissance:
+    icon: "🔍"
+    tools:
+      - "nmap"
+      - "masscan"
+      - "rustscan"
+      - "gobuster"
+      - "dirb"
+      - "ffuf"
+      - "feroxbuster"
+      - "subfinder"
+      - "whatweb"
+      - "wafw00f"
+  
+  "Web Applications":
+    icon: "🌐"
+    tools:
+      - "sqlmap"
+      - "nikto"
+      - "wfuzz"
+      - "burpsuite"
+      - "nuclei"
+      - "browser"
+  
+  Exploitation:
+    icon: "💥"
+    tools:
+      - "metasploit"
+      - "searchsploit"
+      - "custom_scripts"
+  
+  "Password Attacks":
+    icon: "🔐"
+    tools:
+      - "hydra"
+      - "john"
+      - "hashcat"
+  
+  "Post-Exploitation":
+    icon: "📡"
+    tools:
+      - "command"
+      - "file_system"
+  
+  General:
+    icon: "⚙️"
+    tools:
+      - "python"
+      - "python3"
+      - "bash"
+      - "curl"
+      - "wget"
+      - "nc"
+
 # Configuración de seguridad (PERMISIVA para pentesting)
 security:
   # Comandos permitidos - AHORA INCLUYE CASI TODO

@@ -11,6 +11,7 @@ let state = {
     selectedAgentId: null,
     editingAgentId: null,
     debugPanelCollapsed: false,
+    currentTab: 'dashboard', // Current active tab
     activityFilters: {
         command: true,
         chat: true,
@@ -18,6 +19,32 @@ let state = {
         error: true
     }
 };
+
+// ============================================================================
+// Tab Navigation
+// ============================================================================
+
+function switchTab(tabName) {
+    state.currentTab = tabName;
+
+    // Update tab buttons
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.tab === tabName) {
+            btn.classList.add('active');
+        }
+    });
+
+    // Update tab content
+    document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.remove('active');
+        if (content.dataset.tab === tabName) {
+            content.classList.add('active');
+        }
+    });
+
+    console.log(`Switched to tab: ${tabName}`);
+}
 
 // ============================================================================
 // Debug & Activity Logging
@@ -346,9 +373,11 @@ function openChat(agentId) {
 
     if (!agent) return;
 
+    // Switch to chat tab
+    switchTab('chat');
+
     document.getElementById('chat-agent-name').textContent =
-        `${agent.role} (${agent.model})`;
-    document.getElementById('chat-section').style.display = 'flex';
+        `Chat with ${agent.role} (${agent.model})`;
     document.getElementById('chat-messages').innerHTML = '';
 
     addActivityLog('system', `Opened chat with agent`, agentId);
@@ -371,6 +400,9 @@ async function sendMessage() {
     addMessageToChat('user', message);
     textarea.value = '';
 
+    // Show typing indicator
+    showTypingIndicator();
+
     // Log user message
     addActivityLog('chat', `User: ${message.substring(0, 100)}${message.length > 100 ? '...' : ''}`, state.selectedAgentId);
 
@@ -379,6 +411,9 @@ async function sendMessage() {
             type: 'chat',
             content: message
         });
+
+        // Remove typing indicator
+        removeTypingIndicator();
 
         if (result.success) {
             addMessageToChat('assistant', result.response);
@@ -394,6 +429,7 @@ async function sendMessage() {
             addActivityLog('error', `Task failed: ${result.error}`, state.selectedAgentId);
         }
     } catch (error) {
+        removeTypingIndicator();
         console.error('Error sending message:', error);
         addMessageToChat('system', 'Failed to send message');
         addActivityLog('error', `Failed to send message: ${error.message}`, state.selectedAgentId);
@@ -404,12 +440,41 @@ function addMessageToChat(role, content) {
     const container = document.getElementById('chat-messages');
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${role}`;
+
+    // Avatar emoji
+    const avatar = role === 'user' ? '👤' : '🤖';
+
     messageDiv.innerHTML = `
-        <div class="message-role">${role}</div>
-        <div class="message-content">${content}</div>
+        <div class="message-avatar">${avatar}</div>
+        <div class="message-bubble">
+            <div class="message-role">${role}</div>
+            <div class="message-content">${content.replace(/\n/g, '<br>')}</div>
+        </div>
     `;
     container.appendChild(messageDiv);
     container.scrollTop = container.scrollHeight;
+}
+
+function showTypingIndicator() {
+    const container = document.getElementById('chat-messages');
+    const indicatorDiv = document.createElement('div');
+    indicatorDiv.className = 'message assistant loading';
+    indicatorDiv.id = 'typing-indicator';
+    indicatorDiv.innerHTML = `
+        <div class="message-avatar">🤖</div>
+        <div class="message-bubble">
+            <div class="typing-indicator">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+    `;
+    container.appendChild(indicatorDiv);
+    container.scrollTop = container.scrollHeight;
+}
+
+function removeTypingIndicator() {
+    const indicator = document.getElementById('typing-indicator');
+    if (indicator) indicator.remove();
 }
 
 // ============================================================================
@@ -580,6 +645,13 @@ document.addEventListener('DOMContentLoaded', () => {
     init();
 
     state.editingAgentId = null;
+
+    // Tab switching
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            switchTab(btn.dataset.tab);
+        });
+    });
 
     // Debug panel filter checkboxes
     const filterIds = ['command', 'chat', 'system', 'error'];
