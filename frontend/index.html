@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Pentesting Playground</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <h1>🔐 AI Pentesting Playground</h1>
+            <div class="header-info">
+                <span class="status-indicator" id="status-indicator">●</span>
+                <span id="status-text">Connecting...</span>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Sidebar - Agents -->
+            <aside class="sidebar">
+                <div class="sidebar-header">
+                    <h2>Active Agents</h2>
+                    <button class="btn btn-primary" id="btn-create-agent">+ New Agent</button>
+                </div>
+
+                <div class="agents-list" id="agents-list">
+                    <!-- Agents will be populated here -->
+                </div>
+
+                <div class="sidebar-stats">
+                    <h3>System Resources</h3>
+                    <div class="resource-bar">
+                        <label>RAM</label>
+                        <div class="bar">
+                            <div class="bar-fill" id="ram-bar"></div>
+                        </div>
+                        <span id="ram-text">0 / 0 GB</span>
+                    </div>
+                    <div class="resource-bar">
+                        <label>VRAM</label>
+                        <div class="bar">
+                            <div class="bar-fill" id="vram-bar"></div>
+                        </div>
+                        <span id="vram-text">0 / 0 GB</span>
+                    </div>
+                    <div class="resource-bar">
+                        <label>Disk</label>
+                        <div class="bar">
+                            <div class="bar-fill" id="disk-bar"></div>
+                        </div>
+                        <span id="disk-text">0 / 0 GB</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Panel -->
+            <section class="main-panel">
+                <!-- Debug/Activity Log Panel -->
+                <div class="debug-panel">
+                    <div class="section-header" onclick="toggleDebugPanel()">
+                        <h2>🔍 Activity Log & Debug</h2>
+                        <button class="btn btn-small" id="btn-clear-logs"
+                            onclick="event.stopPropagation(); clearActivityLog();">Clear</button>
+                    </div>
+                    <div id="debug-content" class="debug-content">
+                        <div class="debug-filters">
+                            <label><input type="checkbox" id="filter-command" checked> Commands</label>
+                            <label><input type="checkbox" id="filter-chat" checked> Chat</label>
+                            <label><input type="checkbox" id="filter-system" checked> System</label>
+                            <label><input type="checkbox" id="filter-error" checked> Errors</label>
+                        </div>
+                        <div id="activity-log" class="activity-log">
+                            <div class="log-entry system" data-type="system">
+                                <span class="log-time">00:00:00</span>
+                                <span class="log-type">[SYSTEM]</span>
+                                <span class="log-message">Playground initialized</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Models Section -->
+                <div class="models-section">
+                    <h2>Available Models</h2>
+                    <div class="models-grid" id="models-grid">
+                        <!-- Models will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Chat Interface -->
+                <div class="chat-section" id="chat-section" style="display: none;">
+                    <div class="chat-header">
+                        <h3 id="chat-agent-name">Select an agent</h3>
+                        <button class="btn btn-secondary" id="btn-close-chat">Close</button>
+                    </div>
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Messages will appear here -->
+                    </div>
+                    <div class="chat-input">
+                        <textarea id="chat-textarea" placeholder="Enter your message..." rows="3"></textarea>
+                        <button class="btn btn-primary" id="btn-send">Send</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal: Create Agent -->
+    <div class="modal" id="modal-create-agent">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Agent</h2>
+                <button class="modal-close" id="btn-close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Role</label>
+                    <select id="agent-role">
+                        <option value="recon">Reconnaissance</option>
+                        <option value="exploit">Exploitation</option>
+                        <option value="analysis">Analysis</option>
+                        <option value="custom">Custom</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Model</label>
+                    <select id="agent-model">
+                        <!-- Will be populated dynamically -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Custom System Prompt (Optional)</label>
+                    <textarea id="agent-prompt" rows="5"
+                        placeholder="Leave empty to use default role prompt..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>🛠️ Allowed Tools (Check to enable)</label>
+                    <div class="tools-grid" id="tools-selector">
+                        <label class="tool-checkbox">
+                            <input type="checkbox" value="nmap" checked> nmap
+                        </label>
+                        <label class="tool-checkbox">
+                            <input type="checkbox" value="gobuster" checked> gobuster
+                        </label>
+                        <label class="tool-checkbox">
+                            <input type="checkbox" value="sqlmap" checked> sqlmap
+                        </label>
+                        <label class="tool-checkbox">
+                            <input type="checkbox" value="metasploit" checked> metasploit
+                        </label>
+                        <label class="tool-checkbox">
+                            <input type="checkbox" value="browser" checked> browser
+                        </label>
+                        <label class="tool-checkbox">
+                            <input type="checkbox" value="command" checked> command (⚠️ unrestricted)
+                        </label>
+                    </div>
+                </div>
+
+                <div class="requirements" id="requirements-display">
+                    <h4>Estimated Requirements</h4>
+                    <div class="requirements-grid">
+                        <div>RAM: <span id="req-ram">-</span></div>
+                        <div>VRAM: <span id="req-vram">-</span></div>
+                        <div>Disk: <span id="req-disk">-</span></div>
+                    </div>
+                    <div id="req-warnings" class="warnings"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-modal">Cancel</button>
+                <button class="btn btn-primary" id="btn-confirm-create">Create Agent</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Agent Permissions -->
+    <div class="modal" id="modal-agent-permissions">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔐 Agent Permissions</h2>
+                <button class="modal-close" id="btn-close-permissions">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="agent-permissions-info">
+                    <h3 id="permissions-agent-name">Agent Name</h3>
+                    <p id="permissions-agent-role">Role</p>
+                </div>
+
+                <div class="permissions-section">
+                    <h4>Allowed Tools</h4>
+                    <div class="tools-list" id="permissions-tools-list">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
+
+                <div class="permissions-section">
+                    <h4>⚠️ Command Tool Settings</h4>
+                    <label class="toggle-option">
+                        <input type="checkbox" id="allow-command-tool">
+                        <span>Allow arbitrary command execution</span>
+                    </label>
+                    <p class="help-text">When enabled, agent can execute ANY shell command</p>
+                </div>
+
+                <div class="permissions-section">
+                    <h4>Execution Limits</h4>
+                    <div class="form-group">
+                        <label>Command Timeout (seconds)</label>
+                        <input type="number" id="command-timeout" value="900" min="60" max="3600">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="btn-cancel-permissions">Cancel</button>
+                <button class="btn btn-primary" id="btn-save-permissions">Save Permissions</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/app.js"></script>
+</body>
+
+</html>

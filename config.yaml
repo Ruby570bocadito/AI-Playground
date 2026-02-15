@@ -1,0 +1,211 @@
+# AI Pentesting Playground Configuration
+
+server:
+  host: "0.0.0.0"
+  port: 8080
+  cors_origins:
+    - "http://localhost:8080"
+    - "http://127.0.0.1:8080"
+
+ollama:
+  base_url: "http://localhost:11434"
+  timeout: 300
+
+# Catálogo de modelos disponibles
+models_catalog:
+  llama3.2:
+    size_gb: 2.0
+    ram_gb: 4.0
+    vram_gb: 2.5
+    parameters: "3B"
+    description: "Modelo rápido y eficiente para tareas generales"
+    recommended_for: ["recon", "custom"]
+  
+  llama3.2:70b:
+    size_gb: 40.0
+    ram_gb: 64.0
+    vram_gb: 40.0
+    parameters: "70B"
+    description: "Modelo grande y potente para análisis complejos"
+    recommended_for: ["analysis", "exploit"]
+  
+  mistral:
+    size_gb: 4.1
+    ram_gb: 8.0
+    vram_gb: 4.5
+    parameters: "7B"
+    description: "Excelente para razonamiento y análisis"
+    recommended_for: ["exploit", "analysis"]
+  
+  codellama:
+    size_gb: 3.8
+    ram_gb: 8.0
+    vram_gb: 4.0
+    parameters: "7B"
+    description: "Especializado en código y scripts"
+    recommended_for: ["analysis", "custom"]
+  
+  phi3:
+    size_gb: 2.3
+    ram_gb: 4.0
+    vram_gb: 2.8
+    parameters: "3.8B"
+    description: "Modelo pequeño pero eficiente"
+    recommended_for: ["recon", "custom"]
+  
+  deepseek-coder:
+    size_gb: 3.7
+    ram_gb: 8.0
+    vram_gb: 4.2
+    parameters: "6.7B"
+    description: "Especializado en análisis de código y exploits"
+    recommended_for: ["exploit", "analysis"]
+
+# Configuración de roles predefinidos
+roles:
+  recon:
+    name: "Reconnaissance Agent"
+    description: "Especializado en reconocimiento y enumeración"
+    system_prompt: |
+      You are a penetration testing expert specializing in reconnaissance and enumeration.
+      Your tasks include:
+      - Port scanning and service detection
+      - Subdomain enumeration
+      - Technology stack identification
+      - OSINT gathering
+      - Network mapping
+      
+      You have access to tools like nmap, gobuster, browsers, and can execute any command needed.
+      When you need to run a tool, format your response as a tool call with the appropriate parameters.
+      Always provide detailed findings in a structured format.
+    
+    allowed_tools:
+      - "nmap"
+      - "gobuster"
+      - "subfinder"
+      - "browser"
+      - "command"  # Permite comandos arbitrarios
+    
+    recommended_models:
+      - "llama3.2"
+      - "phi3"
+  
+  exploit:
+    name: "Exploitation Agent"
+    description: "Especializado en identificación y explotación de vulnerabilidades"
+    system_prompt: |
+      You are a penetration testing expert specializing in vulnerability identification and exploitation.
+      Your tasks include:
+      - Analyzing reconnaissance data for vulnerabilities
+      - Identifying potential attack vectors
+      - Crafting and executing exploits
+      - SQL injection, XSS, RCE detection and exploitation
+      - Integration with Metasploit framework
+      
+      You have full access to exploitation frameworks and can execute any commands needed.
+      When you identify a vulnerability, provide proof-of-concept exploits and detailed explanations.
+    
+    allowed_tools:
+      - "sqlmap"
+      - "metasploit"
+      - "browser"
+      - "command"  # Permite comandos arbitrarios
+      - "custom_scripts"
+    
+    recommended_models:
+      - "mistral"
+      - "deepseek-coder"
+  
+  analysis:
+    name: "Analysis Agent"
+    description: "Especializado en análisis de resultados y código"
+    system_prompt: |
+      You are a cybersecurity analyst expert specializing in:
+      - Analyzing penetration test results  
+      - Reviewing source code for vulnerabilities
+      - Interpreting command outputs (nmap, nikto, etc.)
+      - Identifying patterns and correlations
+      - Providing strategic recommendations
+      
+      You synthesize information from multiple sources and provide actionable insights.
+      Focus on identifying the most critical vulnerabilities and attack paths.
+      You can execute commands to gather more information as needed.
+    
+    allowed_tools:
+      - "browser"
+      - "command"  # Permite comandos arbitrarios
+      - "file_system"
+    
+    recommended_models:
+      - "mistral"
+      - "codellama"
+      - "llama3.2:70b"
+  
+  custom:
+    name: "Custom Agent"
+    description: "Agente completamente personalizable sin restricciones"
+    system_prompt: |
+      You are a flexible AI assistant for penetration testing with full system access.
+      Your role and capabilities will be defined by the user.
+      You can execute any commands, use any tools, and perform any pentesting tasks requested.
+    
+    allowed_tools:
+      - "nmap"
+      - "gobuster"
+      - "sqlmap"
+      - "metasploit"
+      - "browser"
+      - "command"  # Permite comandos arbitrarios
+      - "custom_scripts"
+    
+    recommended_models:
+      - "llama3.2"
+      - "mistral"
+      - "phi3"
+
+# Configuración de seguridad (PERMISIVA para pentesting)
+security:
+  # Comandos permitidos - AHORA INCLUYE CASI TODO
+  allowed_commands:
+    - "nmap"
+    - "gobuster"
+    - "nikto"
+    - "sqlmap"
+    - "msfconsole"
+    - "subfinder"
+    - "ffuf"
+    - "hydra"
+    - "john"
+    - "hashcat"
+    - "burpsuite"
+    - "dirb"
+    - "wfuzz"
+    - "whatweb"
+    - "wafw00f"
+    - "nuclei"
+    - "masscan"
+    - "rustscan"
+    - "feroxbuster"
+    - "python"
+    - "python3"
+    - "bash"
+    - "sh"
+    - "curl"
+    - "wget"
+    - "nc"
+    - "netcat"
+    # NOTA: Con "command" tool, los agentes pueden ejecutar CUALQUIER comando
+    # La whitelist es solo una guía, no una restricción
+  
+  # Timeout extendido para comandos complejos
+  command_timeout: 900  # 15 minutos
+  
+  # Directorio de trabajo
+  workspace_dir: "/tmp/pentest-playground"
+
+# Logging
+logging:
+  level: "INFO"
+  file: "playground.log"
+  max_size_mb: 50
+  backup_count: 3
