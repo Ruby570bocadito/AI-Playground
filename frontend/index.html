@@ -109,7 +109,13 @@
                                 to Dashboard</button>
                         </div>
                         <div class="chat-messages" id="chat-messages">
-                            <!-- Messages will appear here -->
+                            <!-- Welcome message when no agent selected -->
+                            <div style="text-align: center; padding: 3rem; color: var(--gray);">
+                                <div style="font-size: 4rem; margin-bottom: 1rem;">💬</div>
+                                <h3 style="margin-bottom: 0.5rem;">No Agent Selected</h3>
+                                <p>Go to <strong>Dashboard</strong> tab and click <strong>Chat</strong> on an agent to
+                                    start conversing.</p>
+                            </div>
                         </div>
                         <div class="chat-input">
                             <textarea id="chat-textarea" placeholder="Enter your message..." rows="3"></textarea>
@@ -121,18 +127,167 @@
 
             <!-- Collaboration Tab -->
             <div class="tab-content" data-tab="collaboration">
-                <section class="main-panel" style="width: 100%; padding: 2rem; text-align: center;">
-                    <h2>🤝 Agent Collaboration</h2>
-                    <p style="color: var(--gray); margin-top: 1rem;">Coming soon! Multi-agent cooperative tasks.</p>
+                <section class="main-panel" style="width: 100%; padding: 2rem;">
+                    <h2>🤝 Multi-Agent Collaboration</h2>
+                    <p style="color: var(--gray); margin-bottom: 2rem;">Orchestrate multiple agents working together on
+                        complex tasks</p>
+
+                    <!-- Agent Selection -->
+                    <div
+                        style="background: var(--dark); padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem; border: 1px solid var(--border);">
+                        <h3 style="margin-bottom: 1rem;">Select Agents for Collaboration</h3>
+                        <div id="collab-agents-list"
+                            style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem;">
+                            <div style="padding: 1rem; background: var(--dark-light); border-radius: 6px; text-align: center; cursor:pointer; border: 2px solid transparent;"
+                                onclick="this.style.borderColor = this.style.borderColor === 'rgb(99, 102, 241)' ? 'transparent' : 'var(--primary)'">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔍</div>
+                                <div style="font-weight: 600;">Recon Agent</div>
+                                <div style="font-size: 0.75rem; color: var(--gray);">Click to select</div>
+                            </div>
+                            <div style="padding: 1rem; background: var(--dark-light); border-radius: 6px; text-align: center; cursor:pointer; border: 2px solid transparent;"
+                                onclick="this.style.borderColor = this.style.borderColor === 'rgb(99, 102, 241)' ? 'transparent' : 'var(--primary)'">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔬</div>
+                                <div style="font-weight: 600;">Analysis Agent</div>
+                                <div style="font-size: 0.75rem; color: var(--gray);">Click to select</div>
+                            </div>
+                            <div style="padding: 1rem; background: var(--dark-light); border-radius: 6px; text-align: center; cursor:pointer; border: 2px solid transparent;"
+                                onclick="this.style.borderColor = this.style.borderColor === 'rgb(99, 102, 241)' ? 'transparent' : 'var(--primary)'">
+                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">💥</div>
+                                <div style="font-weight: 600;">Exploit Agent</div>
+                                <div style="font-size: 0.75rem; color: var(--gray);">Click to select</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pipeline Visualization -->
+                    <div
+                        style="background: var(--dark); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+                        <h3 style="margin-bottom: 1rem;">Pipeline Status</h3>
+                        <div style="display: flex; flex-direction: column; gap: 1rem;">
+                            <div
+                                style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--dark-light); border-radius: 6px;">
+                                <div
+                                    style="width: 40px; height: 40px; border-radius: 50%; background: var(--success); display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                    1</div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600;">🔍 Reconnaissance</div>
+                                    <div style="font-size: 0.875rem; color: var(--gray);">Scan target and enumerate
+                                        services</div>
+                                </div>
+                                <div style="color: var(--success); font-weight: 600;">✓ Ready</div>
+                            </div>
+                            <div
+                                style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--dark-light); border-radius: 6px;">
+                                <div
+                                    style="width: 40px; height: 40px; border-radius: 50%; background: var(--gray); display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                    2</div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600;">🔬 Analysis</div>
+                                    <div style="font-size: 0.875rem; color: var(--gray);">Analyze results and identify
+                                        vulnerabilities</div>
+                                </div>
+                                <div style="color: var(--gray); font-weight: 600;">⏸ Waiting</div>
+                            </div>
+                            <div
+                                style="display: flex; align-items: center; gap: 1rem; padding: 1rem; background: var(--dark-light); border-radius: 6px;">
+                                <div
+                                    style="width: 40px; height: 40px; border-radius: 50%; background: var(--gray); display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                                    3</div>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600;">💥 Exploitation</div>
+                                    <div style="font-size: 0.875rem; color: var(--gray);">Execute exploits on confirmed
+                                        vulnerabilities</div>
+                                </div>
+                                <div style="color: var(--gray); font-weight: 600;">⏸ Waiting</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary" style="margin-top: 1.5rem; width: 100%;">▶ Start
+                            Collaboration</button>
+                    </div>
                 </section>
             </div>
 
             <!-- Configuration Tab -->
             <div class="tab-content" data-tab="config">
-                <section class="main-panel" style="width: 100%; padding: 2rem; text-align: center;">
-                    <h2>🔧 Configuration</h2>
-                    <p style="color: var(--gray); margin-top: 1rem;">Coming soon! Agent management and tool categories.
-                    </p>
+                <section class="main-panel" style="width: 100%; padding: 2rem;">
+                    <h2>🔧 Configuration & Tool Categories</h2>
+                    <p style="color: var(--gray); margin-bottom: 2rem;">Manage agents and view available pentesting
+                        tools</p>
+
+                    <!-- Tool Categories Grid -->
+                    <div
+                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                        <div
+                            style="background: var(--dark); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border);">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">🔍 Reconnaissance</h3>
+                            <p style="font-size: 0.75rem; color: var(--gray); margin-bottom: 1rem;">Port scanning,
+                                enumeration, OSINT</p>
+                            <div style="display: flex; flex-wrap: gap; gap: 0.5rem;">
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">nmap</span>
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">masscan</span>
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">gobuster</span>
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">ffuf</span>
+                            </div>
+                        </div>
+                        <div
+                            style="background: var(--dark); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border);">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">🌐 Web Applications</h3>
+                            <p style="font-size: 0.75rem; color: var(--gray); margin-bottom: 1rem;">Web testing, SQL
+                                injection, fuzzing</p>
+                            <div style="display: flex; flex-wrap: gap; gap: 0.5rem;">
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">sqlmap</span>
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">nikto</span>
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">wfuzz</span>
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">burp</span>
+                            </div>
+                        </div>
+                        <div
+                            style="background: var(--dark); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border);">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">💥 Exploitation</h3>
+                            <p style="font-size: 0.75rem; color: var(--gray); margin-bottom: 1rem;">Exploit frameworks
+                                and tools</p>
+                            <div style="display: flex; flex-wrap: gap; gap: 0.5rem;">
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">metasploit</span>
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">searchsploit</span>
+                            </div>
+                        </div>
+                        <div
+                            style="background: var(--dark); padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border);">
+                            <h3 style="font-size: 1.1rem; margin-bottom: 0.75rem;">🔐 Password Attacks</h3>
+                            <p style="font-size: 0.75rem; color: var(--gray); margin-bottom: 1rem;">Cracking and brute
+                                force</p>
+                            <div style="display: flex; flex-wrap: gap; gap: 0.5rem;">
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">hydra</span>
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">john</span>
+                                <span
+                                    style="padding: 0.25rem 0.5rem; background: var(--dark-light); border-radius: 4px; font-size: 0.75rem; border: 1px solid var(--border);">hashcat</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Configuration Actions -->
+                    <div
+                        style="background: var(--dark); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+                        <h3 style="margin-bottom: 1rem;">Configuration Management</h3>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <button class="btn btn-primary">💾 Save Configuration</button>
+                            <button class="btn btn-secondary">📂 Load Configuration</button>
+                            <button class="btn btn-secondary">📤 Export JSON</button>
+                            <button class="btn btn-secondary">📥 Import JSON</button>
+                        </div>
+                    </div>
                 </section>
             </div>
 
@@ -166,9 +321,69 @@
 
             <!-- Results Tab -->
             <div class="tab-content" data-tab="results">
-                <section class="main-panel" style="width: 100%; padding: 2rem; text-align: center;">
-                    <h2>📋 Results History</h2>
-                    <p style="color: var(--gray); margin-top: 1rem;">Coming soon! Scan results and reports.</p>
+                <section class="main-panel" style="width: 100%; padding: 2rem;">
+                    <h2>📋 Scan Results & History</h2>
+                    <p style="color: var(--gray); margin-bottom: 2rem;">View and export previous scan results</p>
+
+                    <!-- Results List -->
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        <!-- Example Result 1 -->
+                        <div
+                            style="background: var(--dark); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div>
+                                    <h3 style="margin-bottom: 0.5rem;">🔍 Nmap Scan - 192.168.1.100</h3>
+                                    <div style="font-size: 0.875rem; color: var(--gray);">� 2026-02-15 22:30 • 🤖
+                                        recon-agent • ⏱️ 15s</div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-small btn-secondary">📄 View</button>
+                                    <button class="btn btn-small btn-secondary">📥 Export</button>
+                                    <button class="btn btn-small btn-danger">🗑️</button>
+                                </div>
+                            </div>
+                            <div
+                                style="background: var(--dark-light); padding: 1rem; border-radius: 6px; font-family: monospace; font-size: 0.875rem;">
+                                <div>✓ Found 3 open ports:</div>
+                                <div style="color: var(--success);"> • 22/tcp (SSH)</div>
+                                <div style="color: var(--success);"> • 80/tcp (HTTP)</div>
+                                <div style="color: var(--success);"> • 443/tcp (HTTPS)</div>
+                            </div>
+                        </div>
+
+                        <!-- Example Result 2 -->
+                        <div
+                            style="background: var(--dark); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border);">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                                <div>
+                                    <h3 style="margin-bottom: 0.5rem;">🌐 Gobuster Scan - example.com</h3>
+                                    <div style="font-size: 0.875rem; color: var(--gray);">📅 2026-02-15 22:15 • 🤖
+                                        recon-agent • ⏱️ 2m 34s</div>
+                                </div>
+                                <div style="display: flex; gap: 0.5rem;">
+                                    <button class="btn btn-small btn-secondary">📄 View</button>
+                                    <button class="btn btn-small btn-secondary">📥 Export</button>
+                                    <button class="btn btn-small btn-danger">🗑️</button>
+                                </div>
+                            </div>
+                            <div
+                                style="background: var(--dark-light); padding: 1rem; border-radius: 6px; font-family: monospace; font-size: 0.875rem;">
+                                <div>✓ Discovered 12 directories:</div>
+                                <div style="color: var(--success);"> • /admin</div>
+                                <div style="color: var(--success);"> • /api</div>
+                                <div style="color: var(--gray);"> • ... and 10 more</div>
+                            </div>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div
+                            style="text-align: center; padding: 3rem; color: var(--gray); border: 2px dashed var(--border); border-radius: 8px;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+                            <p>No more results. Run scans from agents to populate this list.</p>
+                        </div>
+                    </div>
                 </section>
             </div>
         </main>
