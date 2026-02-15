@@ -390,7 +390,7 @@ if __name__ == "__main__":
     port = cfg['server'].get('port', 8080)
     
     uvicorn.run(
-        "main:app",
+        "backend.main:app",
         host=host,
         port=port,
         reload=True,

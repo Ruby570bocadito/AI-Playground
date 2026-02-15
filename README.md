@@ -17,7 +17,7 @@ Multi-agent AI system for penetration testing with dynamic model management and 
 - **GPU**: NVIDIA GPU with 8GB+ VRAM recommended (16GB+ for multiple large models)
 - **RAM**: 16GB minimum, 32GB+ recommended
 - **Disk**: 100GB+ free space for models
-- **Python**: 3.10 or higher
+- **Python**: 3.11, 3.12, or 3.13 (fully compatible with Python 3.13)
 - **Ollama**: For local model inference
 
 ## 🚀 Quick Start
@@ -60,7 +60,13 @@ ollama pull llama3.2:70b  # 40GB - Powerful analysis
 ### 4. Start the Playground
 
 ```bash
+# Method 1: Using the start script
+chmod +x scripts/start.sh
 ./scripts/start.sh
+
+# Method 2: Direct execution (if script has issues)
+source venv/bin/activate
+python3 -m backend.main
 ```
 
 ### 5. Access Web Interface
@@ -229,6 +235,22 @@ curl -fsSL https://ollama.com/install.sh | sh
 - Ensure the model is downloaded
 - Check system resources (RAM/VRAM)
 - Review logs in `backend/playground.log`
+
+### Import Errors ("attempted relative import beyond top-level package")
+
+```bash
+# Make sure you run from the project root
+cd ~/path/to/AI-Playground
+source venv/bin/activate
+python3 -m backend.main
+```
+
+### Permission Denied on Scripts
+
+```bash
+chmod +x scripts/install.sh
+chmod +x scripts/start.sh
+```
 
 ## 📁 Project Structure
 
