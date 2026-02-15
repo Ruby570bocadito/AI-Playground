@@ -154,6 +154,14 @@ class Agent:
         user_message = task.get("content", "")
         context = task.get("context", {})
         
+        # Detectar si el usuario quiere ejecutar herramientas
+        tool_result = await self._detect_and_execute_tool(user_message)
+        
+        if tool_result:
+            # Si se ejecutó una herramienta, devolver el resultado
+            return tool_result
+        
+        # Si no, continuar con chat normal
         # Construir mensajes con historial
         messages = [
             {"role": "system", "content": self.system_prompt}
@@ -207,6 +215,95 @@ class Agent:
                 "success": False,
                 "error": str(e)
             }
+    
+    async def _detect_and_execute_tool(self, user_message: str) -> Optional[Dict]:
+        """
+        Detecta si el mensaje del usuario requiere ejecutar herramientas
+        y las ejecuta automáticamente
+        
+        Returns:
+            Resultado de la herramienta o None si no se detectó ninguna
+        """
+        import re
+        
+        msg_lower = user_message.lower()
+        
+        # Detectar intención de escaneo con nmap
+        if any(keyword in msg_lower for keyword in ["escaneo", "escanea", "scan", "nmap"]):
+            # Extraer IP o dominio
+            ip_pattern = r'\b(?:\d{1,3}\.){3}\d{1,3}\b'
+            domain_pattern = r'\b(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]\b'
+            
+            target = None
+            ip_match = re.search(ip_pattern, user_message)
+            if ip_match:
+                target = ip_match.group(0)
+            else:
+                domain_match = re.search(domain_pattern, user_message)
+                if domain_match:
+                    target = domain_match.group(0)
+            
+            if target and "nmap" in self.allowed_tools:
+                logger.info(f"Agent {self.id}: Auto-ejecutando nmap en {target}")
+                
+                result = await self._execute_tool({
+                    "tool": "nmap",
+                    "params": {
+                        "target": target,
+                        "flags": "-sV -sC"  # Default: version detection + scripts
+                    }
+                })
+                
+                if result.get("success"):
+                    response = f"✅ **Escaneo de {target} completado:**\n\n```\n{result.get('output', '')}\n```"
+                else:
+                    response = f"❌ **Error al escanear {target}:**\n\n{result.get('error', 'Unknown error')}"
+                
+                # Guardar en historial
+                self.conversation_history.append({"role": "user", "content": user_message})
+                self.conversation_history.append({"role": "assistant", "content": response})
+                
+                return {
+                    "success": True,
+                    "response": response,
+                    "tool_executed": "nmap",
+                    "target": target
+                }
+        
+        # Detectar gobuster/directory busting
+        if any(keyword in msg_lower for keyword in ["gobuster", "dirb", "fuzzing", "directories", "directorios"]):
+            url_pattern = r'https?://[^\s]+'
+            url_match = re.search(url_pattern, user_message)
+            
+            if url_match and "gobuster" in self.allowed_tools:
+                url = url_match.group(0)
+                logger.info(f"Agent {self.id}: Auto-ejecutando gobuster en {url}")
+                
+                result = await self._execute_tool({
+                    "tool": "gobuster",
+                    "params": {
+                        "url": url,
+                        "wordlist": "/usr/share/wordlists/dirb/common.txt"
+                    }
+                })
+                
+                if result.get("success"):
+                    response = f"✅ **Directory busting de {url} completado:**\n\n```\n{result.get('output', '')}\n```"
+                else:
+                    response = f"❌ **Error en gobuster:**\n\n{result.get('error', 'Unknown error')}"
+                
+                self.conversation_history.append({"role": "user", "content": user_message})
+                self.conversation_history.append({"role": "assistant", "content": response})
+                
+                return {
+                    "success": True,
+                    "response": response,
+                    "tool_executed": "gobuster",
+                    "target": url
+                }
+        
+        # No se detectó herramienta
+        return None
     
     async def _execute_tool(self, task: Dict) -> Dict:
         """
