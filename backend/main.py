@@ -134,9 +134,9 @@ class ModelDownloadRequest(BaseModel):
 # ENDPOINTS - SYSTEM
 # ============================================================================
 
-@app.get("/")
-async def root():
-    """Root endpoint"""
+@app.get("/api")
+async def api_info():
+    """API information"""
     return {
         "name": "AI Pentesting Playground",
         "version": "1.0.0",
